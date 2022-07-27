@@ -1,0 +1,41 @@
+.tecla{
+    font-size: 2rem;
+    border: 1px solid black;
+    border-radius: 10px
+}
+.tecla-2{
+    font-size: 2rem;
+    background-color: #e6e8ea;
+    border: 1px solid black;
+    border-radius: 10px
+}
+.tecla-3{
+    font-size: 2rem;
+    background-color: #3485d6;
+    border: 1px solid black;
+    border-radius: 10px
+}
+
+.tecla:hover{
+    background-color: #e6e8ea;
+    border: none;
+    border: 1px solid black;
+}
+
+.tecla-2:hover{
+    background-color: #9cb7d2;
+    border: none;
+    border: 1px solid black;
+}
+
+.tecla-3:hover{
+    background-color: #e7e747;
+    border: none;
+    border: 1px solid black;
+}
+
+.btns-calculadora{
+    user-select: none;
+}
+
+
