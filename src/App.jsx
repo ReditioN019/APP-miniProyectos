@@ -1,10 +1,8 @@
 
 
-
 export const App = () => {
     return (
         <>
-
             <h1 className="flex justify-content-center ">Proyectos</h1>
             <div className="shadow-lg p-3 mb-5 bg-body rounded-3 border border-success">
                 <p>Aqui voy a poner una breve descripción de mi intención con este proyecto y bla bla bla bla bla. Para que fín lo hice y explicar algun detalle mínimo</p>

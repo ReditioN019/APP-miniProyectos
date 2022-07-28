@@ -14,7 +14,5 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                 <Route path="/apiclima" element={<ApiClima />} />
             </Routes>
         </div>
-
     </BrowserRouter>
-
 )
