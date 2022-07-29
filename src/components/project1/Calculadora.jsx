@@ -1,15 +1,8 @@
 import { useState } from 'react';
-import { CgMathEqual, CgMathPercent } from 'react-icons/cg';
-import { TbLetterC } from 'react-icons/tb';
+import { CgMathEqual} from 'react-icons/cg';
 import './index.css'
 
-function evaluaArimetica(fn) {
-    return new Function('return ' + fn)();
-}
-// console.log( evaluaArimetica('12/5*9+9.4*2') );
-
-
-
+function evaluaArimetica(fn) { return new Function('return ' + fn)(); }
 
 export const Calculadora = () => {
 
@@ -18,18 +11,30 @@ export const Calculadora = () => {
 
 
     const handleClick = ({ target }) => {
+        if (inputValue.length > 17) return;
+        
         let valueKey = target.getAttribute('name');
 
         if (inputValue == '0' && valueKey === '+') return setInputValue('0');
         if (inputValue == '0' && valueKey === '-') return setInputValue('0');
         if (inputValue == '0' && valueKey === '*') return setInputValue('0');
         if (inputValue == '0' && valueKey === '/') return setInputValue('0');
+        if (inputValue == '0' && valueKey === '.') return setInputValue('0');
         if (inputValue == '0') return setInputValue(valueKey);
 
         //obtengo el valor actual del input
         let valorInput = inputValue + valueKey
         //convierto el string en un array
         const valorArr = valorInput.split('');
+
+        if(valueKey != '+' && valueKey != '-' && valueKey != '/' && valueKey != '*'){
+            let count = 0;
+            for (let i = 0; i < valorArr.length; i++) {
+                if(valorArr[i] === '.') count++;
+                if(count === 2) return;
+            }
+        }
+
         //Obtengo los dos ultimos elementos del array y los transformo a string
         let dosUltimosElementosArray = valorArr.slice(-2).join('');
         //comprobar que no existen solo valores != de numeros (+ - / *)
@@ -49,7 +54,16 @@ export const Calculadora = () => {
                 return setInputValue('0');
             case 'C':
                 if(inputValue.toString().length === 1) return setInputValue('0')  
-                else return setInputValue(inputValue.toString().slice(0, - 1))               
+                else return setInputValue(inputValue.toString().slice(0, - 1)) 
+            case '+/-' :
+                const cambioSigno = parseInt( inputValue * -1 );
+                if(!isNaN(cambioSigno)) return setInputValue(cambioSigno.toString());   
+                return inputValue.toString();     
+            case '%':
+                let re = /[+/*]/;
+                if(re.test(inputValue) || inputValue.endsWith('-')) return;
+                const cambioAInt = parseInt(inputValue)/100
+                return setInputValue(cambioAInt.toString())      
             default:
                 return;
         }
@@ -57,10 +71,8 @@ export const Calculadora = () => {
 
 
     const handleSubmit = (e) => {
-        e.preventDefault();
-        // setInputValue(eval(inputValue))
+        e.preventDefault(); 
         setInputValue(evaluaArimetica(inputValue))
-        // console.clear();
     }
 
     return (
@@ -77,22 +89,22 @@ export const Calculadora = () => {
 
 
                     <div className="row">
-                        <button className="col tecla-2" onClick={() => handleClick()}><CgMathPercent /></button>
-                        <button className="col tecla-2" onClick={() => handleClickSpecial('CE')}>CE</button>
-                        <div className="col tecla-2" onClick={() => handleClickSpecial('C')}><TbLetterC /></div>
-                        <button className="col tecla-2" name="/" onClick={handleClick}>/</button>
+                        <div className="col tecla-2 fw-bolder" onClick={() => handleClickSpecial('%')}>%</div>
+                        <div className="col tecla-2 fw-bolder" onClick={() => handleClickSpecial('CE')}>CE</div>
+                        <div className="col tecla-2 fw-bolder" onClick={() => handleClickSpecial('C')}>C</div>
+                        <div className="col tecla-2 fw-bolder" name="/" onClick={handleClick}>/</div>
                     </div>
                     <div className="row">
                         <div className="col tecla" name='7' onClick={handleClick}>7</div>
                         <div className="col tecla" name='8' onClick={handleClick}>8</div>
                         <div className="col tecla" name='9' onClick={handleClick}>9</div>
-                        <button className="col tecla-2 fw-bolder" name="*" onClick={handleClick}>x</button>
+                        <div className="col tecla-2 fw-bolder" name="*" onClick={handleClick}>x</div>
                     </div>
                     <div className="row">
                         <div className="col tecla" name='4' onClick={handleClick}>4</div>
                         <div className="col tecla" name='5' onClick={handleClick}>5</div>
                         <div className="col tecla" name='6' onClick={handleClick}>6</div>
-                        <button className="col tecla-2 fw-bolder" name="-" onClick={handleClick}>-</button>
+                        <div className="col tecla-2 fw-bolder" name="-" onClick={handleClick}>-</div>
                     </div>
                     <div className="row">
                         <div className="col tecla" name='1' onClick={handleClick}>1</div>
@@ -101,9 +113,9 @@ export const Calculadora = () => {
                         <div className="col tecla-2 fw-bolder" name="+" onClick={handleClick}>+</div>
                     </div>
                     <div className="row">
-                        <button className="col tecla-2" onClick={() => handleClick()}>+/-</button>
+                        <div className="col tecla-2 fw-bolder" onClick={() => handleClickSpecial('+/-')}>+/-</div>
                         <div className="col tecla" name='0' onClick={handleClick}>0</div>
-                        <button className="col tecla-2" onClick={() => handleClick()}>,</button>
+                        <div className="col tecla-2 fw-bolder" name='.' onClick={handleClick}>.</div>
 
 
                         <button type="submit" className="col tecla-3"><CgMathEqual /></button>
