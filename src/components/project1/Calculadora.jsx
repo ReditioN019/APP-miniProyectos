@@ -8,26 +8,48 @@ function evaluaArimetica(fn) {
 }
 // console.log( evaluaArimetica('12/5*9+9.4*2') );
 
+
+
+
 export const Calculadora = () => {
 
     const [inputValue, setInputValue] = useState('0');
 
-    const handleClick = ({ target }) => {
-        if (inputValue == '0'){
-            return setInputValue(target.getAttribute('name'))
-        }
 
-        setInputValue(inputValue + target.getAttribute('name'))
+
+    const handleClick = ({ target }) => {
+        let valueKey = target.getAttribute('name');
+
+        if (inputValue == '0' && valueKey === '+') return setInputValue('0');
+        if (inputValue == '0' && valueKey === '-') return setInputValue('0');
+        if (inputValue == '0' && valueKey === '*') return setInputValue('0');
+        if (inputValue == '0' && valueKey === '/') return setInputValue('0');
+        if (inputValue == '0') return setInputValue(valueKey);
+
+        //obtengo el valor actual del input
+        let valorInput = inputValue + valueKey
+        //convierto el string en un array
+        const valorArr = valorInput.split('');
+        //Obtengo los dos ultimos elementos del array y los transformo a string
+        let dosUltimosElementosArray = valorArr.slice(-2).join('');
+        //comprobar que no existen solo valores != de numeros (+ - / *)
+        let re = /\d/;
+        const tieneUnNumbero = re.test(dosUltimosElementosArray);
+        //Si no tiene ningún número, significa que hay dos simbolos, plt, return
+        if (tieneUnNumbero) setInputValue(inputValue + valueKey)
     }
 
 
+
     const handleClickSpecial = key => {
+        if(inputValue.toString() === '0') return
+
         switch (key) {
             case 'CE':
                 return setInputValue('0');
             case 'C':
-                // return setInputValue({ value: value.slice(0, -1) })
-                return setInputValue(value.substring(0, value.length - 1))
+                if(inputValue.toString().length === 1) return setInputValue('0')  
+                else return setInputValue(inputValue.toString().slice(0, - 1))               
             default:
                 return;
         }
@@ -36,6 +58,7 @@ export const Calculadora = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        // setInputValue(eval(inputValue))
         setInputValue(evaluaArimetica(inputValue))
         // console.clear();
     }
@@ -56,7 +79,7 @@ export const Calculadora = () => {
                     <div className="row">
                         <button className="col tecla-2" onClick={() => handleClick()}><CgMathPercent /></button>
                         <button className="col tecla-2" onClick={() => handleClickSpecial('CE')}>CE</button>
-                        <div className="col tecla-2" onClick={() => handleClick('C')}><TbLetterC /></div>
+                        <div className="col tecla-2" onClick={() => handleClickSpecial('C')}><TbLetterC /></div>
                         <button className="col tecla-2" name="/" onClick={handleClick}>/</button>
                     </div>
                     <div className="row">
