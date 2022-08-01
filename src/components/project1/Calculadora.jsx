@@ -1,38 +1,29 @@
 import { useState } from 'react';
-import { CgMathEqual} from 'react-icons/cg';
+import { CgMathEqual } from 'react-icons/cg';
+import {validaOperadores, validateOperadoresBasicos, evaluaArimetica, validateDotOperation, specialActions} from './helpers';
 import './index.css'
-
-function evaluaArimetica(fn) { return new Function('return ' + fn)(); }
 
 export const Calculadora = () => {
 
     const [inputValue, setInputValue] = useState('0');
 
-
-
     const handleClick = ({ target }) => {
-        if (inputValue.length > 17) return;
-        
         let valueKey = target.getAttribute('name');
 
-        if (inputValue == '0' && valueKey === '+') return setInputValue('0');
-        if (inputValue == '0' && valueKey === '-') return setInputValue('0');
-        if (inputValue == '0' && valueKey === '*') return setInputValue('0');
-        if (inputValue == '0' && valueKey === '/') return setInputValue('0');
-        if (inputValue == '0' && valueKey === '.') return setInputValue('0');
+        if (inputValue.length > 17) return;
+        //impide que se comience operando con operadores especiales (+-*/.)
+        if (inputValue == '0' && validaOperadores(valueKey)) return setInputValue('0');
         if (inputValue == '0') return setInputValue(valueKey);
 
-        //obtengo el valor actual del input
-        let valorInput = inputValue + valueKey
+        //obtengo el valor actual del input sumando el ultimo valor ingresado con el que ya estaba en el state
+        let valorInput = inputValue + valueKey;
         //convierto el string en un array
         const valorArr = valorInput.split('');
 
-        if(valueKey != '+' && valueKey != '-' && valueKey != '/' && valueKey != '*'){
-            let count = 0;
-            for (let i = 0; i < valorArr.length; i++) {
-                if(valorArr[i] === '.') count++;
-                if(count === 2) return;
-            }
+        //valido que solo permita ingresar un punto entre simbolos de operación
+        if (!validateOperadoresBasicos(valueKey)) {
+            const a = validateDotOperation(valorArr, inputValue)
+            if (a === -1) return; //si se ingresa 2 puntos en un numero, termina
         }
 
         //Obtengo los dos ultimos elementos del array y los transformo a string
@@ -45,33 +36,15 @@ export const Calculadora = () => {
     }
 
 
-
     const handleClickSpecial = key => {
-        if(inputValue.toString() === '0') return
-
-        switch (key) {
-            case 'CE':
-                return setInputValue('0');
-            case 'C':
-                if(inputValue.toString().length === 1) return setInputValue('0')  
-                else return setInputValue(inputValue.toString().slice(0, - 1)) 
-            case '+/-' :
-                const cambioSigno = parseInt( inputValue * -1 );
-                if(!isNaN(cambioSigno)) return setInputValue(cambioSigno.toString());   
-                return inputValue.toString();     
-            case '%':
-                let re = /[+/*]/;
-                if(re.test(inputValue) || inputValue.endsWith('-')) return;
-                const cambioAInt = parseInt(inputValue)/100
-                return setInputValue(cambioAInt.toString())      
-            default:
-                return;
-        }
+        if (inputValue.toString() === '0') return
+        specialActions(key, inputValue, setInputValue)
     }
 
 
     const handleSubmit = (e) => {
-        e.preventDefault(); 
+        e.preventDefault();
+        if (inputValue.endsWith('+') || inputValue.endsWith('-') || inputValue.endsWith('*') || inputValue.endsWith('/')) return
         setInputValue(evaluaArimetica(inputValue))
     }
 
@@ -81,7 +54,7 @@ export const Calculadora = () => {
             <hr />
 
             <div className="row d-flex justify-content-center">
-                <form onSubmit={handleSubmit} className="text-center btns-calculadora col-12  col-md-6" >
+                <form onSubmit={handleSubmit} className="text-center btns-calculadora col-12 col-sm-8 col-lg-4" >
 
 
                     <div type="text" className="form-control py-2 my-3 text-end fw-bolder fs-3"
