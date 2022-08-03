@@ -1,5 +1,6 @@
 import { Link, NavLink } from "react-router-dom";
 import { BiCalculator } from 'react-icons/bi';
+import { TiWeatherPartlySunny } from 'react-icons/ti';
 
 
 export const NavBar = () => {
@@ -21,7 +22,7 @@ export const NavBar = () => {
                         <NavLink
                             className={({ isActive }) => `nav-link ${isActive && 'active'}`}
                             to="/apiclima">
-                            Api Clima
+                            Api Clima <TiWeatherPartlySunny/>
                         </NavLink>
                     </ul>
                 </div>
